@@ -1,0 +1,196 @@
+<template>
+  <div style="margin-top:30px;">
+
+<<<<<<< HEAD
+        <div class="divRow" style="display: flex; " >
+          <transition-group name="list" style=" display: flex; width: 100%" :duration="{enter:600,leave:0}">
+            <div  v-for="column in columns" :key="column.id" class="FlexGrowColumn">
+              <Column  style="flex-grow: 1; justify-content: center"  :id="column.id" :rowN="idRow" :first="column.firstColumnValueArray">
+
+              </Column>
+            </div>
+          </transition-group>
+
+=======
+    <div class="divRow" style="display: flex; ">
+      <transition-group name="list" style=" display: flex; width: 100%" :duration="{enter:600,leave:0}">
+        <div v-for="column in columns" :key="column.id" class="FlexGrowColumn">
+          <Column style="flex-grow: 1; justify-content: center" :id="column.id" :rowN="idRow"
+                  :first="column.firstColumnValueArray">
+
+          </Column>
+        </div>
+      </transition-group>
+
+    </div>
+>>>>>>> f896407ae7efb087f198bc1cafa3278f00b7559f
+
+
+
+        </div>
+        <button class="DeleteRow btn btn-outline-danger" @click="deleteRow">
+          Usuń wiersz
+        </button>
+    <hr v-if="breakLine" style="border-top: 1px solid gray;">
+  </div>
+
+</template>
+<script>
+    import Column from './Column'
+    import {bus} from "../main";
+
+    export default {
+        data() {
+            return {
+                columns: [],
+                breakLine: false,
+                config: '  "__Row_nr' + this.id + '": {',
+                idColumns: 1,
+                firstColumnValue: this.firstColumn
+            }
+        },
+        props: {
+            id: {
+                type: Number
+            },
+            firstColumn: {
+                type: String
+            }
+        },
+        components: {Column},
+        methods: {
+            pobierz() {
+                for (let i = 0; i < this.columns.length; i++) {
+                    bus.$emit('getConfigFromColumn' + this.id + this.columns[i].id)
+                    if (i === (this.columns.length - 1))
+                        this.config += "";
+                    else this.config += ","
+                }
+                this.config += "}"
+                bus.$emit('sendConfigFromRow' + this.id, this.config);
+                this.config = '  "__Row_nr' + this.id + '": {';
+                /*console.log("=====config====");
+                console.log(this.config);
+                console.log("=========")*/
+            },
+<<<<<<< HEAD
+            deleteRow(){
+              bus.$emit('deleteRow'+this.id, this.id);
+            },
+            delEvent(v){
+                var deleteCol= 'delete'+this.id+v;
+                bus.$on(deleteCol, ()=>{
+=======
+            delEvent(v) {
+                var deleteCol = 'delete' + this.id + v;
+                bus.$on(deleteCol, () => {
+>>>>>>> f896407ae7efb087f198bc1cafa3278f00b7559f
+                    /*console.log(v);*/
+                    /*console.log(this.columns.length+"lalala")
+                    console.log(this.columns.indexOf(0)+ this.id_col);*/
+                    let delVal;
+                    for (let i = 0; i < this.columns.length; i++) {
+                        if (this.columns[i].id === v)
+                            delVal = i;
+                    }
+                    this.$delete(this.columns, delVal)
+                    /*this.columns.splice(this.columns.indexOf(1,1));*/
+                });
+            }
+        },
+        computed: {
+            idRow() {
+                return this.id;
+            }
+        },
+
+        created() {
+<<<<<<< HEAD
+                console.log(this.id + " this is row id");
+                if(this.firstColumnValue!=="button")
+                {
+                  this.columns.push({firstColumnValueArray: this.firstColumnValue, id:this.idColumns})
+
+                }
+                else this.columns.push({firstColumnValueArray:"button", id:this.idColumns});
+
+                this.delEvent(0);
+                var a= 'dodaj'+this.id;
+                bus.$on(a, ()=>{
+=======
+            if (this.firstColumnValue !== "button") {
+                this.columns.push({firstColumnValueArray: this.firstColumnValue, id: this.idColumns})
+>>>>>>> f896407ae7efb087f198bc1cafa3278f00b7559f
+
+            } else this.columns.push({firstColumnValueArray: "button", id: this.idColumns});
+
+            this.delEvent(0);
+            var a = 'dodaj' + this.id;
+            bus.$on(a, () => {
+                if (this.columns.length < 3) {
+                    this.idColumns++;
+                    this.columns.push({id: this.idColumns})
+                    this.delEvent(this.idColumns);
+                    console.log(this.idColumns + "this is new id Column")
+
+
+                    let a = 'configColumn' + this.id + this.idColumns;
+                    bus.$on(a, (v) => {
+                        this.config += v + " ";
+                        console.log("==== this is config row=====");
+                        console.log(this.config);
+                        console.log("=========");
+
+                    });
+                } else alert('kolumn jest za duzo')
+            });
+
+
+            var aa = 'breakline' + this.id;
+            bus.$on(aa, () => {
+                this.breakLine = true
+            });
+
+            var aaa = 'configColumn' + this.id + this.idColumns;
+            bus.$on(aaa, (v) => {
+                this.config += v;
+                console.log("==== this is config row=====");
+                console.log(this.config);
+                console.log("=========");
+
+            });
+            var aaaa = 'getConfigFromRow' + this.id;
+            bus.$on(aaaa, () => {
+                console.log("====row config=====")
+                this.pobierz();
+                console.log("====row config=====")
+            });
+
+        }
+
+    }
+</script>
+<style scoped>
+<<<<<<< HEAD
+  .DeleteRow{
+    position: relative;
+    left: 57%;
+    top: -53%;
+  }
+  .FlexGrowColumn{
+=======
+  .FlexGrowColumn {
+>>>>>>> f896407ae7efb087f198bc1cafa3278f00b7559f
+    flex-grow: 6;
+    overflow: auto;
+  }
+
+  .list-enter-active, .list-leave-active {
+    transition: opacity 1s;
+  }
+
+  .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */
+  {
+    opacity: 0;
+  }
+</style>

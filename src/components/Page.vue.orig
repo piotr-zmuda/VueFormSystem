@@ -1,0 +1,218 @@
+<template>
+  <div>
+    <div class="form-wrapper justify-content-center">
+
+      <div class="form-container" @drop.prevent="onDrop($event)" :draggable="false" @dragover.prevent="onOver($event)"
+           @dragenter.prevent="onEnter($event)" @dragleave.prevent="onLeave($event)">
+
+<<<<<<< HEAD
+      <div class="form-container-divs">
+          <div v-for="row in rows" :id="'row'+row.id" :key="row.id" >
+              <Row :id="row.id" :firstColumn="row.firstColumn"/>
+          </div>
+
+          <div v-if="entered"  class="previewRow"  >
+            <Row style="pointer-events: none;" :firstColumn="firstColumnPreview" ></Row>
+=======
+        <div class="form-container-divs">
+          <transition-group name="list" :duration="{enter:600,leave:0}">
+            <div v-for="(row,index) in rows" :id="'rowID'+index" :key="index">
+              <Row :id="index" :firstColumn="row.firstColumn"/>
+            </div>
+          </transition-group>
+          <div v-if="entered" class="previewRow">
+            <Row style="pointer-events: none;" :firstColumn="firstColumnPreview"></Row>
+>>>>>>> f896407ae7efb087f198bc1cafa3278f00b7559f
+          </div>
+
+        </div>
+
+      </div>
+      <Modals :draggable="false"></Modals>
+    </div>
+    <div style="align-content: center; text-align: center; margin-top: 4rem;" class="rowButton" :draggable="false">
+      <v-btn class="btn btn-primary addButton" @click="addRow"> {{$t('dodaj')}} {{$t('wiersz')}}</v-btn>
+    </div>
+  </div>
+</template>
+<script>
+    import Row from './Row';
+    import {bus} from '../main'
+    import Modals from '../components/Modals';
+
+    export default {
+        data() {
+
+            return {
+                rowNB: 0,
+                rows: [],
+                tempTable: [],
+                wholeConfig: '[ {',
+                entered: false,
+                previewEnter: false,
+                formContainerEnter: false,
+                formContainerDivs: false,
+                firstColumnPreview: 'button'
+            }
+        },
+        methods: {
+            onOver(ev) {
+            },
+            onEnter(ev) {
+                /*console.log("====enter====")
+                console.log(ev.target)
+                console.log("====enter====")*/
+                if (ev.target.className === "form-container") {
+                    this.formContainerEnter = true;
+                    this.previewEnter = false;
+                    this.entered = true;
+
+                } else if (ev.target.className === "previewRow") {
+                    this.formContainerEnter = false;
+                    this.previewEnter = true;
+                    this.entered = true;
+                } else if (ev.target.className === "form-container-divs") {
+                    this.formContainerDivs = true;
+                    this.previewEnter = false;
+                    this.entered = false;
+                }
+            },
+            onLeave(ev) {
+                /*console.log("====left====")
+                console.log(ev.target)
+                console.log("====left====")*/
+
+                if (ev.target.className === "form-container" && this.previewEnter) {
+                    this.entered = true;
+                } else if (ev.target.className === "previewRow" && this.formContainerEnter) {
+                    this.formContainerEnter = false;
+                    this.entered = true;
+                } else if (this.formContainerEnter && this.formContainerDivs) {
+                    this.formContainerDivs = false;
+                    this.entered = true;
+                    this.previewEnter = true;
+                    this.formContainerEnter = false;
+                } else this.entered = false
+            },
+            onDrop(ev) {
+                /*console.log(ev.currentTarget);*/
+                let src = ev.dataTransfer.getData("pageID");
+                this.entered = false;
+                /*console.log(idParent)
+                  console.log(changingInnerColumn)*/
+
+                if (ev.target.className === "form-container" || this.previewEnter) {
+                    console.log(this.previewEnter)
+                    console.log(this.rows.length)
+                    var a = 'sendConfigFromRow' + this.rows.length;
+                    bus.$on(a, (v) => {
+                        this.wholeConfig += v;
+                        /*console.log("=========");
+                        console.log(this.wholeConfig);
+                        console.log("=========");*/
+
+                    });
+                    this.rows.push({firstColumn: src});
+                }
+            },
+<<<<<<< HEAD
+            addRow(){
+                var a= 'sendConfigFromRow'+this.rows.length;
+                bus.$on(a, (v)=>{
+                  this.wholeConfig += v;
+                });
+
+                var aa= 'deleteRow'+this.rowNB;
+                bus.$on(aa, (v)=>{
+                  let index=0;
+                  for(let i=0; i<this.rows.length;i++)
+                  {
+
+                    if(this.rows[i].id===v)
+                      index=i
+
+                  }
+                  this.$delete(this.rows,index)
+                });
+
+                this.rows.push({firstColumn:"button" , id: this.rowNB});
+                this.rowNB=this.rowNB+1;
+=======
+            addRow() {
+                var a = 'sendConfigFromRow' + this.rows.length;
+                bus.$on(a, (v) => {
+                    this.wholeConfig += v;
+                });
+
+                this.rows.push({firstColumn: "button"});
+>>>>>>> f896407ae7efb087f198bc1cafa3278f00b7559f
+            },
+            download() {
+                this.wholeConfig = '[ {';
+
+                /*console.log("====Whole config=====");
+                console.log(this.wholeConfig);
+                console.log("=========");*/
+                for (let i = 0; i < this.rows.length; i++) {
+                    var a = 'getConfigFromRow' + i;
+                    bus.$emit(a)
+                    if (i === (this.rows.length - 1))
+                        this.wholeConfig += ""
+                    else this.wholeConfig += ","
+                }
+
+                this.sendConfigToFinal();
+            },
+            sendConfigToFinal() {
+                // console.log(this.wholeConfig)
+                //Convert JSON Array to string.
+                this.wholeConfig += " } ]"
+                var json = this.wholeConfig;
+
+                //Convert JSON string to BLOB.
+                json = [json];
+                var blob1 = new Blob(json, {type: "text/plain;charset=utf-8"});
+
+                let link = document.createElement('a')
+                link.href = window.URL.createObjectURL(blob1)
+                link.download = 'sampleCsv.txt'
+                link.click()
+
+                bus.$emit('configFinale', this.wholeConfig);
+            }
+
+        },
+        computed: {},
+        components: {
+            Row, Modals
+        },
+        created() {
+
+            bus.$on('downloadWholeConfigFromPage', () => {
+                /*console.log('lol2')*/
+                this.download();
+            });
+            bus.$on('changePreview', (v) => {
+                /*console.log('lol2')*/
+                this.firstColumnPreview = v;
+                console.log(v)
+            });
+
+
+        }
+    }
+</script>
+<style scoped>
+  .list-item {
+    display: flex;
+  }
+
+  .list-enter-active, .list-leave-active {
+    transition: opacity 1s;
+  }
+
+  .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */
+  {
+    opacity: 0;
+  }
+</style>

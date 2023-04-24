@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins:wght@200&display=swap');
+
+.containerr{
+  width:100%;
+  display: flex;
+  height: 100vh;
+}
+body{
+  display: block;
+  height: 100vh;
+
+  font-weight: 200;
+}
+.nav-header{
+  text-align: center;
+}
+.r-navbar{
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 22%;
+}
+
+.l-navbar-opened {
+  z-index: 1;
+  width: 15%;
+  background-color:#FFFFFF 	!important ;
+  transition: .5s;
+  box-shadow: 2px 32px 11px #D0D0D0
+}
+.l-navbar-closed {
+  z-index: 1;
+  width: 3%;
+  background-color:#FFFFFF 	!important ;
+  transition: .5s;
+  box-shadow: 2px 32px 11px #D0D0D0
+}
+
+.nav-button-trigger .rotate-90 svg{
+  transform: rotate(90deg);
+
+}
+.rotate-180 svg{
+  transform: rotate(180deg);
+
+}
+.nav-button-trigger{
+  display: flex;
+  text-align: left;
+  width: 100%;
+  height: 50px;
+  border:0 	#F0F0F0 solid;
+  padding: 4.5%;
+  background-color: #FFFFFF ;
+  transition: linear 0.5s;
+}
+.nav-button-trigger:hover{
+  border-right-width: 5px;
+  background-color:	rgba(190,190,190,0.2);
+}
+.nav-button-trigger span{
+  position: relative;
+  right: 0;
+}
+
+.formColumn {
+  display: flex;
+  min-height: 100px;
+  transition: ease 0.5s;
+
+}
+.formColumn:hover{
+  box-shadow: 0 0 5px rgba(190,190,190,0.8);
+}
+
+.nav {
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  transition: linear 1s;
+}
+.nav-menu{
+  width: 100%;
+
+  padding: 0;
+}
+.nav-menu li{
+  list-style: none;
+  width: 100%;
+}
+.nav *{
+  transition: linear 1s;
+  opacity: 1;
+}
+.left-pan-forms div span{
+    width: 100%;
+}
+.left-pan-forms *{
+  transition: linear 1s;
+}
+.span-icon-rotate *{
+  transition: linear 0.5s;
+}
+
+.span-icon-rotate {
+  margin-left: 10px;
+  text-align: right;
+  width: 10%;
+  transition: linear 0.5s;
+}
+.span-icon-text{
+  width: 90%;
+}
+.compButton{
+
+}
+
+.bodyContainer{
+  width: 100%;
+  min-height: 89vh;
+  background-color: white;
+  display: flex;
+}
+
+.nav-pan{
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+.logo{
+  vertical-align: center;
+  padding: 1rem 1rem;
+  align-content: center;
+
+}
+.form-wrapper{
+  background-color: white;
+  max-width: 1320px;
+  margin: auto;
+  padding: 12px;
+
+
+}
+.addButton{
+  padding: 10px 20px;
+  text-align: center;
+  align-content: center;
+  border-radius: 10px;
+  transition: ease-out 1s;
+}
+.addButton:hover{
+  align-content: center;
+  color: black;
+  cursor: pointer;
+  background-color: dimgray;
+}
+.form-container{
+  max-width: 65%;
+  height: 83vh;
+  background-color: white;
+  margin-left: 7%;
+  padding: 1px;
+  grid-template-columns: 1fr 1fr;
+  text-align: center;
+  box-shadow: -4px -10px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+body .modal-backdrop{
+  position: inherit;
+}
+.option-modal{
+
+}
+.modal{
+  z-index: 0;
+}
+.list-enter-active, .list-leave-active {
+  transition: opacity 0.5s;
+}
+.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}

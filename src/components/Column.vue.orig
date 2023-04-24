@@ -1,0 +1,878 @@
+<template>
+  <div>
+
+    <div class="formColumn" style="overflow: auto">
+      <button @click="leftAlignMethod" class="aligneButton">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+
+      <button @click="centerAlignMethod" class="aligneButton" style="position: relative;
+    left: -30px;
+    bottom: -37px;">
+        <i class="fas fa-dot-circle"></i>
+      </button>
+
+
+      <div style="flex-grow: 0.2" class="changeColumnButtonDiv">
+        <button class="changeColumnButton" @click="openModal"><i class="fas fa-cog"></i></button>
+
+      </div>
+
+
+      <div class="contentColumn align-self-center"
+           :class="{leftAlignClass : leftAlign, rightAlignClass : rightAlign, centerAlignClass: centerAlign}"
+           ref="contentColumnDiv" style="flex-grow: 6" @drop.prevent="onDrop($event)" :draggable="true"
+           @dragstart="dragStartEvent($event)">
+
+        <transition name="bounce" :duration="{enter:600,leave:0}">
+          <b-button v-if="form===0" size="sm" @click="openModal" class="btn btn-outline-success mr-2">
+
+            <i class="fa fa-plus"/>
+
+          </b-button>
+
+
+          <input style="left: -22px;
+          position: relative;" v-if="form===1" :placeholder="fieldName"/>
+
+          <h1 style="left: -22px; position: relative; "
+              :style="[fontConfig.includes('bold') ? {'font-weight':'bold'} : {'font-weight':'normal'}, fontConfig.includes('italic') ? {'font-style':'italic'} : {'font-style':''}, fontConfig.includes('fontSize') ? {'font-size' : fontSize+'px'} : {'font-size' : '2.5rem'}]"
+              v-if="form===2" v-html="fieldName" @blur="changeValueHeader"></h1>
+
+          <b-form-checkbox v-if="form===4"
+                           name="checkbox-1"
+                           value="accepted"
+                           contenteditable="true"
+                           unchecked-value="not_accepted"
+          >
+            <h4 v-if="form===4" style="position: relative; top: -4px; color: gray; cursor: move"
+                v-html="fieldName"></h4>
+          </b-form-checkbox>
+          <select v-if="form===5" placeholder="lala" class="form-select">
+            <option value="" disabled selected hidden>{{fieldName}}</option>
+            <option v-for="option in optionsTab" :value="option.valOpt" v-html="option.valName">
+            </option>
+          </select>
+          <input v-if="form===6" type="date" name="date" value="" placeholder="Data">
+          <textarea v-if="form===7" name="textarea">{{fieldName}}</textarea>
+
+        </transition>
+      </div>
+
+
+
+      <div class="columnButtons" style="flex-grow: 0.2">
+        <button type="button" class="btn closeButton" data-dismiss="modal" aria-label="Close" @click="removeColumn">
+          <i class="fas fa-minus-circle"></i>
+        </button>
+
+        <div>
+          <button class="addColumnButton" @click="addColumn"><i class="fas fa-plus"></i></button>
+
+        </div>
+
+
+      </div>
+
+      <button @click="rightAlignMethod" class="aligneButton">
+        <i class="fas fa-arrow-right"></i>
+      </button>
+
+    </div>
+
+    <hr v-if="form===3">
+
+    <div :draggable="false">
+      <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+           :draggable="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Opcje</h5>
+              <button type="button" class="btn btn-secondary-close" data-dismiss="modal" aria-label="Close"
+                      style="color: dimgray">
+                &times;
+              </button>
+
+            </div>
+
+            <div class="modal-body">
+              <button class="btn btn-outline-primary" style=" " @click="inputLabel"><i class="far fa-square"></i> <br>{{$t('field')}}
+              </button>
+
+              <button class="btn btn-outline-primary" style="" @click="headerLabel"><i class="fas fa-heading"></i><br>{{$t('header')}}
+              </button>
+
+              <button class="btn btn-outline-primary" style="" @click="hrLabel"><i class="fas fa-grip-lines"></i><br>
+                {{$t('line')}}
+              </button>
+
+              <button class="btn btn-outline-primary" @click="checkInputLabel"><i class="far fa-check-square"></i><br>
+                {{$t('confirmationfield')}}
+              </button>
+
+              <button class="btn btn-outline-primary" @click="optionLabel"><i class="fas fa-filter"></i><br>
+                {{$t('listField')}}
+              </button>
+
+              <button class="btn btn-outline-primary" @click="textAreaLabel"><i class="fas fa-font"></i><br>
+                {{$t('textarea')}}
+              </button>
+
+              <button class="btn btn-outline-primary" @click="dateLabel"><i class="far fa-calendar"></i><br>
+                {{$t('date')}}
+              </button>
+
+            </div>
+
+            <br><br>
+
+            <div v-if="form!==0" class="justify-content-center" style="margin-bottom: 15px;">
+
+              <label>
+<<<<<<< HEAD
+                <input  @select="testFunction" style="width: 150px" placeholder="Wartosc pola" v-model="fieldName"/>
+
+                <input  style="width: 150px" placeholder="Nazwa Pola" v-model="nameOfComponent"/>
+=======
+                <input @select="testFunction" style="width: 150px" placeholder="Wartość pola" v-model="fieldName"/>
+                <input style="width: 150px" placeholder="Nazwa Pola" v-model="nameOfComponent"/>
+>>>>>>> f896407ae7efb087f198bc1cafa3278f00b7559f
+              </label>
+              <button @click="changeToHref">Zmień na href</button>
+
+            </div>
+
+
+            <hr v-if="form===1 || form===5 || form===4">
+            <div class="modalValidateOptions" :style="[form===4 || form===5 ? {'display':'flex'} : {'display':'grid'}]">
+              <div style="flex-grow: 2" v-if="form===1 || form===5 || form===4">
+                <input type="checkbox" id="val1" name="val1" value="Required" v-model="validateTabTemp">
+                <label for="val1"> Required</label>
+              </div>
+
+
+              <div v-if="form===1">
+                <input type="checkbox" id="val2" name="val2" value="MaxLength" v-model="validateTabTemp">
+                <label for="val2">
+                  MaxLength
+                </label>
+                <input class="numberInput" v-if="validateTabTemp.includes('MaxLength')" placeholder="0"
+                       v-model="maxLengthVal">
+                <br>
+              </div>
+
+
+              <div v-if="form===1">
+                <input type="checkbox" id="val3" name="val3" value="MinLength" v-model="validateTabTemp">
+                <label for="val3">
+                  MinLength
+                </label>
+                <input class="numberInput" v-if="validateTabTemp.includes('MinLength')" placeholder="0"
+                       v-model="minLengthVal">
+              </div>
+
+
+              <hr v-if="form===1">
+            </div>
+
+            <div v-if="form===2" class="modalValidateOptions">
+              <div>
+                <input type="checkbox" id="bold_text" value="bold" v-model="fontConfig">
+                <label for="bold_text">Pogrubienie</label>
+              </div>
+
+
+              <div>
+                <input type="checkbox" id="italic_text" value="italic" v-model="fontConfig">
+                <label for="italic_text">Italic text</label>
+              </div>
+
+              <div>
+                <input type="checkbox" id="font_size_check" value="fontSize" v-model="fontConfig">
+                <input type="number" id="font_size" value="fontSize" placeholder="Wielkość liter" v-model="fontSize">
+                <label for="font_size">Wielkość liter</label>
+
+              </div>
+
+
+            </div>
+
+            <div v-if="form===5" class="justify-content-around" style="margin-bottom: 10px;">
+              <input type="text" id="OptionsName" v-model="optionName" placeholder="Nazwa Opcji">
+              <input type="text" id="OptionsValue" v-model="optionValue" placeholder="Wartosc Opcji">
+              <br>
+              <button class="btn btn-outline-success" @click="addOption">Dodaj opcje</button>
+
+              <br>
+              Dodane Opcje:
+              <div v-for="options in optionsTab" style="color: #0d6efd; margin-bottom: 5px; margin-top: 8px;">
+                {{options.valName}} {{options.valOpt}}
+              </div>
+
+            </div>
+
+            <div class="modal-footer">
+              <button v-if="form===0" type="button" class="btn btn-primary footer-close" data-dismiss="modal">Zamknij
+              </button>
+
+              <button v-else-if="form!==0" type="button" class="btn btn-primaryy footer-close" data-dismiss="modal"
+                      @click="createValidateTab">Akceptuj
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</template>
+<script>
+    import ModalMenu from './ModalMenu';
+    import {bus} from "../main";
+    import Modals from "./Modals";
+
+    export default {
+<<<<<<< HEAD
+        data(){
+            return{
+                fontSize:1,
+                optionsTab:[],
+                optionValue:0,
+                optionName:'',
+                centerAlign:false,
+                rightAlign:false,
+                leftAlign:false,
+                headerValue:'Nagłowek',
+                checkInputValue:'CheckInput',
+                droppedItem:null,
+                fieldInputValue:'cos tam',
+                fieldName:'',
+                modal:null,
+                form:0,
+                changes:0,
+                colNumbers:0,
+                optionModal:null,
+                validateModal:null,
+                minLengthVal:0,
+                maxLengthVal:0,
+                validateTabTemp:[],
+                validationTab:[],
+                fontConfig:[],
+                configTab:[],
+=======
+        data() {
+            return {
+                fontSize: 1,
+                optionsTab: [],
+                optionValue: 0,
+                optionName: '',
+                centerAlign: false,
+                rightAlign: false,
+                leftAlign: false,
+                headerValue: 'Nagłowek',
+                checkInputValue: 'CheckInput',
+                droppedItem: null,
+                fieldInputValue: 'cos tam',
+                fieldName: '',
+                modal: null,
+                form: 0,
+                changes: 0,
+                colNumbers: 0,
+                optionModal: null,
+                validateModal: null,
+                minLengthVal: 0,
+                maxLengthVal: 0,
+                validateTabTemp: [],
+                validationTab: [],
+                fontConfig: [],
+                configTab: [],
+>>>>>>> f896407ae7efb087f198bc1cafa3278f00b7559f
+                text: 'This will get copied!',
+                nameOfComponent:''
+            }
+        },
+        components: {ModalMenu, Modals},
+        props: {
+            id: {
+                type: Number
+            },
+            rowN: {
+                type: Number
+            },
+            first: {
+                type: String
+            }
+        },
+        methods: {
+            testFunction() {
+                console.log(window.getSelection().toString());
+            },
+            changeToHref() {
+                console.log(window.getSelection().toString())
+                console.log(this.fieldName.search(window.getSelection().toString()))
+                let searchedWord = window.getSelection().toString();
+                console.log(searchedWord)
+                this.fieldName = this.fieldName.replaceAll(searchedWord, "<a href='#'>" + searchedWord + "</a>");
+                console.log(this.fieldName + " " + " lalalalal");
+            },
+            addOption() {
+                this.optionsTab.push({
+                    valName: this.optionName,
+                    valOpt: this.optionValue,
+                    valShow: this.optionName + " " + this.optionValue
+                })
+            },
+            leftAlignMethod() {
+                this.leftAlign = true;
+                this.rightAlign = false;
+                this.centerAlign = false;
+            },
+            rightAlignMethod() {
+                this.leftAlign = false;
+                this.rightAlign = true;
+                this.centerAlign = false;
+            },
+            centerAlignMethod() {
+                this.leftAlign = false;
+                this.rightAlign = false;
+                this.centerAlign = true;
+            },
+
+            onDrop(ev) {
+                /*console.log(ev.currentTarget);*/
+                let src = ev.dataTransfer.getData("itemID");
+                let changingInnerColumn = ev.dataTransfer.getData("ColumnChangeFormValue");
+                let idParent = ev.dataTransfer.getData('ColumnChangeID');
+                console.log(ev.target)
+                /*console.log(idParent)
+                  console.log(changingInnerColumn)*/
+                if (src !== '') {
+                    /*console.log("chyba działa")*/
+                    switch (src) {
+                        case "input":
+                            this.form = 1;
+                            break;
+                        case "checkbox":
+                            this.form = 4;
+                            break;
+                        case "header":
+                            this.form = 2;
+                            break;
+                        case "options":
+                            this.form = 5;
+                            break;
+                        case "date":
+                            this.form = 6;
+                            break;
+                        case "textArea":
+                            this.form = 7;
+                            break;
+                    }
+                }
+                if (changingInnerColumn !== '') {
+                    switch (changingInnerColumn) {
+                        case "0":
+                            bus.$emit('droppedInnerColumn' + idParent, this.form);
+                            this.form = 0;
+                            break;
+                        case "1":
+                            bus.$emit('droppedInnerColumn' + idParent, this.form);
+                            this.form = 1;
+                            break;
+                        case "2":
+                            bus.$emit('droppedInnerColumn' + idParent, this.form);
+                            this.form = 2;
+                            break;
+                        case "4":
+                            bus.$emit('droppedInnerColumn' + idParent, this.form);
+                            this.form = 4;
+                            break;
+                        case "5":
+                            bus.$emit('droppedInnerColumn' + idParent, this.form);
+                            this.form = 5;
+                            break;
+                        case "6":
+                            bus.$emit('droppedInnerColumn' + idParent, this.form);
+                            this.form = 6;
+                            break;
+                        case "7":
+                            bus.$emit('droppedInnerColumn' + idParent, this.form);
+                            this.form = 7;
+                            break;
+                    }
+
+                    /*console.log(changingInnerColumn)*/
+                }
+                /*console.log("to odebrane jest form" + this.form)
+              console.log(src==='')*/
+
+            },
+
+
+            dragStartEvent(evt) {
+                /*console.log("======")
+                console.log(evt.target.id)
+                console.log(item)
+                console.log("======")*/
+                evt.dataTransfer.dropEffect = 'move';
+                evt.dataTransfer.effectAllowed = 'move';
+                /* console.log(this.form)*/
+                evt.dataTransfer.setData('ColumnChangeFormValue', this.form);
+                evt.dataTransfer.setData('ColumnChangeID', this.rowN + '' + this.id);
+                /*console.log(this.rowN+''+this.id)*/
+                /*console.log("to wysłane jest form" + this.form)*/
+
+                /*console.log(document.getElementById(item.id))*/
+            },
+
+
+            createValidateTab() {
+                this.validationTab = [];
+                /*console.log(this.minLengthVal)*/
+                for (let i = 0; i < this.validateTabTemp.length; i++) {
+                    switch (this.validateTabTemp[i]) {
+                        case "Required":
+                            this.validationTab.push({Required: 1});
+                            break;
+                        case "MaxLength":
+                            this.validationTab.push({MaxLength: this.maxLengthVal});
+                            break;
+                        case "MinLength":
+                            this.validationTab.push({MinLength: this.minLengthVal});
+                            break;
+                    }
+                }
+            },
+            openModal() {
+                this.modal.show();
+
+            },
+            addColumn() {
+                var a = 'dodaj' + this.rowN;
+                bus.$emit(a)
+            },
+            removeColumn() {
+                var a = 'delete' + this.rowN + this.id;
+                bus.$emit(a);
+            },
+            textAreaLabel() {
+                this.form = 7
+            },
+            dateLabel() {
+                this.form = 6;
+            },
+            checkInputLabel() {
+                this.form = 4;
+            },
+            optionLabel() {
+                this.form = 5;
+            },
+            inputLabel() {
+                this.form = 1;
+            },
+            headerLabel() {
+                this.form = 2;
+            },
+            hrLabel() {
+                var a = 'breakline' + this.rowN;
+                bus.$emit(a)
+            },
+            showValidateModal() {
+                this.modal.hide();
+                var a = 'validateModalShow' + this.rowN + this.id;
+                bus.$emit(a);
+            },
+            changeValueCheckBox(evt) {
+                let src = evt.target.innerText;
+                this.checkInputValue = src;
+            },
+            changeValueHeader(evt) {
+                let src = evt.target.innerText;
+                this.headerValue = src;
+            },
+            sendConfig() {
+                this.configTab = [];
+                switch (this.form) {
+                    case 1://Input
+                        this.configTab.push({component: "BaseInput"});
+                        break;
+                    case 2://header
+                        this.configTab.push({title: this.fieldName});
+                        this.configTab.push({font: this.fontConfig});
+                        break;
+                    case 4://checkbo
+                        this.configTab.push({component: "CheckInput"});
+                        this.configTab.push({label: this.fieldName});
+                        break;
+                    case 5://select
+                        this.configTab.push({component: "BaseSelect"});
+                        this.configTab.push({label: this.fieldName});
+                        break;
+                    case 6://date
+                        this.configTab.push({title: this.headerValue});
+
+                        break;
+                    case 7://textarea
+                        this.configTab.push({component: "textArea"});
+                        this.configTab.push({label: this.fieldName});
+                        break;
+
+                }
+                if (this.validationTab.length !== 0) {
+                    this.configTab.push({vuelidation: this.validationTab});
+                }
+                /*console.log("klakakka")
+                console.log(this.validationTab)
+                console.log("klakakka")*/
+
+                /*console.log("klakakka")
+                console.log(this.configTab)
+                console.log("klakakka")*/
+<<<<<<< HEAD
+                let strA='"'+this.nameOfComponent+'": ';
+                strA+=''+JSON.stringify(this.configTab);
+                strA.replace("{","");
+                let strB=strA.split("{").join("").split("}").join("").split("[").join("{").split("]").join("}");
+                if(this.form===5)
+                {
+                  this.optionsTab=this.optionsTab.split("{").join("").split("}").join("").split("[").join("{").split("]").join("}");
+                  strB+=JSON.stringify([{options: this.optionsTab}]);
+=======
+                let strA = '"'+this.nameOfComponent+'": ';
+                strA += '' + JSON.stringify(this.configTab);
+                strA.replace("{", "");
+                let strB = strA.split("{").join("").split("}").join("").split("[").join("{").split("]").join("}");
+                if (this.form === 5) {
+                    this.optionsTab = this.optionsTab.split("{").join("").split("}").join("").split("[").join("{").split("]").join("}");
+                    strB += JSON.stringify([{options: this.optionsTab}]);
+>>>>>>> f896407ae7efb087f198bc1cafa3278f00b7559f
+                }
+
+                var a = 'configColumn' + this.rowN + this.id;
+                bus.$emit(a, strB);
+            }
+        },
+        computed: {
+            getFieldName() {
+                return this.fieldName;
+            }
+
+        },
+        mounted() {
+            document.addEventListener('mouseup', event => {
+                if (event.target === this.$refs.target || event.target.contains(this.$refs.target))
+                    this.testFunction();
+            });
+
+            this.modal = new bootstrap.Modal(this.$refs['modal']);
+
+        },
+        created() {
+            if (this.first !== 'button') {
+                /*console.log("chyba działa")*/
+                switch (this.first) {
+                    case "input":
+                        this.form = 1;
+                        break;
+                    case "checkbox":
+                        this.form = 4;
+                        break;
+                    case "header":
+                        this.form = 2;
+                        break;
+                    case "options":
+                        this.form = 5;
+                        break;
+                    case "date":
+                        this.form = 6;
+                        break;
+                    case "textArea":
+                        this.form = 7;
+                        break;
+                }
+            } else this.form = 0;
+            var a = 'validateTab' + this.rowN + this.id;
+            bus.$on(a, (v) => {
+                this.validationTab = v;
+                /*console.log("paralaal");
+                console.log(this.validationTab)
+                console.log("paralaal");*/
+            });
+            var aa = 'getConfigFromColumn' + this.rowN + this.id;
+            bus.$on(aa, () => {
+                this.sendConfig();
+            });
+
+            var aaa = 'droppedInnerColumn' + this.rowN + this.id;
+            bus.$on(aaa, (v) => {
+                console.log('powinno działać')
+                this.form = v;
+            });
+
+            var aaaa = 'changeFirstColumn' + this.rowN;
+            bus.$on(aaaa, (v) => {
+                console.log("column")
+                this.form = v;
+            });
+
+        }
+    }
+</script>
+<style scoped>
+  .bounce-enter-active {
+    animation: bounce-in .5s;
+  }
+
+  @keyframes bounce-in {
+    0% {
+      transform: scale(0);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .modal-body {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .rightAlignClass {
+    text-align: right;
+    transition: 1s;
+  }
+
+  .leftAlignClass {
+    text-align: left;
+    transition: 1s;
+  }
+
+  .centerAlignClass {
+    text-align: center;
+    transition: 1s;
+  }
+
+  .modal-title {
+    color: #007bff;
+  }
+
+  input {
+    padding: 0.75rem 1.2rem;
+    border-radius: 5px;
+    border: 1px solid #007bff;
+    color: #007bff;
+    outline-color: #007bff;
+    width: 70%;
+  }
+
+  .inputComponent {
+    padding: 0.75rem 1.2rem;
+    border-radius: 5px;
+    border: 1px solid #007bff;
+    color: #007bff;
+    outline-color: #007bff;
+    width: 70%;
+  }
+
+  label {
+    width: 70%
+  }
+
+  .aligneButton {
+    height: 30px;
+    width: 30px;
+    opacity: 0;
+    transition: ease-out 1s;
+    border-radius: 15px;
+    color: #007bff;
+    background: transparent;
+  }
+
+  .aligneButton:hover {
+    color: #0dcaf0;
+  }
+
+  .formColumn:hover .aligneButton {
+    opacity: 1;
+
+  }
+
+  textarea {
+    width: 70%;
+  }
+
+  input:focus {
+    outline: dimgray !important;
+    border: 1px solid #007bff;
+  }
+
+  h1 {
+    color: gray;
+  }
+
+  .addColumnButton {
+    top: 11px;
+  }
+
+  .form-select {
+    padding: 15px;
+    width: 70%;
+  }
+
+  .closeButton {
+    top: 0;
+    position: relative;
+    color: #007bff;
+    font-size: 18px;
+    font-weight: bold;
+    transition: .5s;
+  }
+
+  .closeButton:hover {
+    color: #0dcaf0;
+  }
+
+  .btn-secondary-close {
+    background-color: transparent;
+    border: 0;
+    font-weight: 900;
+    font-size: 25px;
+    padding: 0;
+  }
+
+  .modal-footer {
+    text-align: center;
+    justify-content: center;
+  }
+
+  .footer-close {
+    background-color: transparent;
+    color: #007bff;
+    transition: ease-out 0.5s;
+    border: 1px solid #007bff;
+  }
+
+  .footer-close:hover {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .modal-body button {
+    padding: 15px;
+  }
+
+  .mr-2 {
+    width: 68px;
+    height: 45px;
+    transition: ease-out .3s;
+    left: -22px;
+    position: relative;
+    top: -1px;
+    background-color: transparent;
+  }
+
+  .mr-2:hover {
+    color: black;
+  }
+
+  .formColumn {
+    display: flex;
+    min-height: 69px;
+  }
+
+  .columnButtons {
+    flex-grow: 1;
+    display: block;
+    opacity: 0;
+    transition: ease-out 0.5s;
+  }
+
+  .columnButtons button {
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+    vertical-align: middle;
+    position: relative;
+  }
+
+  .columnButtons button svg {
+    width: 100%;
+    font-size: 20px;
+    color: #007bff;
+    vertical-align: middle;
+    transition: .5s;
+
+  }
+
+  .columnButtons button svg:hover {
+    color: #0dcaf0;
+
+  }
+
+  .formColumn {
+    transition: ease-out 1s;
+    height: 60px;
+
+  }
+
+  .formColumn:hover {
+    background-color: lightgray;
+
+  }
+
+  .formColumn:hover .changeColumnButton {
+    opacity: 1;
+
+  }
+
+  .formColumn:hover button {
+    opacity: 1;
+  }
+
+  .formColumn:hover .columnButtons {
+    opacity: 1;
+
+  }
+
+  .contentColumn {
+    flex-grow: 60;
+    cursor: move;
+  }
+
+  .changeColumnButton {
+    background: transparent;
+    border: 0;
+    font-size: 25px;
+    position: relative;
+    top: 12px;
+    color: #007bff;
+    opacity: 0;
+    transition: .5s;
+    left: -31px;
+  }
+
+  .changeColumnButton:hover {
+    color: #0dcaf0;
+  }
+
+  .numberInput {
+    width: 60px;
+  }
+
+  .modalValidateOptions {
+    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    display: grid;
+  }
+</style>
